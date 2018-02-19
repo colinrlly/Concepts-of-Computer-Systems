@@ -1,7 +1,7 @@
 # File:		add_ascii_numbers.asm
 # Author:	K. Reek
 # Contributors:	P. White, W. Carithers
-#		<<YOUR NAME HERE>>
+#		Colin Reilly
 #
 # Updates:
 #		3/2004	M. Reek, named constants
@@ -45,6 +45,38 @@ A_FRAMESIZE = 40
 	sw 	$s0, 0($sp)
 	
 # ##### BEGIN STUDENT CODE BLOCK 1 #####
+
+        lw      $s0, 0($a0)     # get address of first number
+        lw      $s1, 4($a0)     # get address of second number
+        lw      $s2, 8($a0)     # get address of result
+        lw      $s3, 12($a0)    # get address of length of strings
+
+        lw      $s3, 0($s3)     # get length of strings
+        move    $s4, $zero      # initialize carry to 0
+
+addition_loop:
+                                # exit when there are no more digits
+        beq     $s2, $zero, done_adding
+        
+        add     $s5, $s0, $s3   # use digit $s3 away from beg of first num
+        add     $s6, $s1, $s3   # use digit $s3 away from beg of second num
+        add     $s7, $s2, $s3   # use digit #s3 away from beg of result
+
+        lw      $t1, 0($s5)     # get the value of the digit in first number
+        lw      $t2, 0($s6)     # get the value of the digit in second number
+
+        add     $t3, $t1, $t2   # add two digits together
+        addi    $t3, $t3, -48   # subtract 48 to get correct ascii
+        add     $t3, $t3, $s4   # add the carry
+
+        
+
+        addi    $s3, $s3, -1    # decrement the digit pointer
+        j       addition_loop   # go back to beginning of loop
+
+done:
+                
+
 # ###### END STUDENT CODE BLOCK 1 ######
 
 #
