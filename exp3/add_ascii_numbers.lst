@@ -51,51 +51,45 @@
   51 0030 8C920008	        lw      $s2, 8($a0)     # get address of result
   52 0034 8C93000C	        lw      $s3, 12($a0)    # get length of strings
   53 0038               
-  54 0038 0000A021	        move    $s4, $zero      # initialize carry to 0
-  55 003c               
-  56 003c               addition_loop:
-  57 003c                                               # exit when there are no more digits
-  58 003c 1240000B	        beq     $s2, $zero, done_adding
-  59 0040                       
-  60 0040 0213A820	        add     $s5, $s0, $s3   # use digit $s3 away from beg of first num
-  61 0044 0233B020	        add     $s6, $s1, $s3   # use digit $s3 away from beg of second num
-  62 0048 0253B820	        add     $s7, $s2, $s3   # use digit #s3 away from beg of result
-  63 004c               
-  64 004c 82A90000	        lb      $t1, 0($s5)     # get the value of the digit in first number
-  65 0050 82CA0000	        lb      $t2, 0($s6)     # get the value of the digit in second number
-  66 0054               
-  67 0054 012A5820	        add     $t3, $t1, $t2   # add two digits together
-  68 0058 216BFFD0	        addi    $t3, $t3, -48   # subtract 48 to get correct ascii
-  69 005c 01745820	        add     $t3, $t3, $s4   # add the carry
-  70 0060               
-  71 0060 A2EB0000	        sb      $t3, 0($s7)        # store the calulated digit in the result
-  72 0064               
-  73 0064 2273FFFF	        addi    $s3, $s3, -1    # decrement the digit pointer
-  74 0068 0800000F	        j       addition_loop   # go back to beginning of loop
-  75 006c               
-  76 006c               done_adding:
-  77 006c                               
-  78 006c               
-  79 006c               # ###### END STUDENT CODE BLOCK 1 ######
-  80 006c               
-  81 006c               #
-  82 006c               # Restore registers ra and s0 - s7 from the stack.
-  83 006c               #
-  84 006c 8FBF0024		lw 	$ra, -4+A_FRAMESIZE($sp)
-  85 0070 8FB7001C		lw 	$s7, 28($sp)
-  86 0074 8FB60018		lw 	$s6, 24($sp)
-  87 0078 8FB50014		lw 	$s5, 20($sp)
-  88 007c 8FB40010		lw 	$s4, 16($sp)
-  89 0080 8FB3000C		lw 	$s3, 12($sp)
-  90 0084 8FB20008		lw 	$s2, 8($sp)
-  91 0088 8FB10004		lw 	$s1, 4($sp)
-  92 008c 8FB00000		lw 	$s0, 0($sp)
-  93 0090 23BD0028		addi 	$sp, $sp, A_FRAMESIZE
-  94 0094               
-  95 0094 03E00008		jr	$ra			# Return to the caller.
+  54 0038                       #addi    $s3, $s3, -1    # decrement length
+  55 0038               
+  56 0038               addition_loop:
+  57 0038                                               # branch when length is 0
+  58 0038 12600007	        beq     $s3, $zero, done_adding
+  59 003c               
+  60 003c 0213A020	        add    $s4, $s0, $s3    # get effective first num digit pointer
+  61 0040 2294FFFF	        addi   $s4, $s4, -1
+  62 0044 0253B020	        add    $s6, $s2, $s3    # get effective result digit pointer
+  63 0048               
+  64 0048 82970000	        lb      $s7, 0($s4)     # get first digit of first num
+  65 004c A2D70000	        sb      $s7, 0($s6)     # store the first digit in result
+  66 0050                       
+  67 0050 2273FFFF	        addi    $s3, $s3, -1    # decrement length num
+  68 0054                       
+  69 0054 0800000E	        j addition_loop
+  70 0058               
+  71 0058               done_adding:
+  72 0058               
+  73 0058               # ###### END STUDENT CODE BLOCK 1 ######
+  74 0058               
+  75 0058               #
+  76 0058               # Restore registers ra and s0 - s7 from the stack.
+  77 0058               #
+  78 0058 8FBF0024		lw 	$ra, -4+A_FRAMESIZE($sp)
+  79 005c 8FB7001C		lw 	$s7, 28($sp)
+  80 0060 8FB60018		lw 	$s6, 24($sp)
+  81 0064 8FB50014		lw 	$s5, 20($sp)
+  82 0068 8FB40010		lw 	$s4, 16($sp)
+  83 006c 8FB3000C		lw 	$s3, 12($sp)
+  84 0070 8FB20008		lw 	$s2, 8($sp)
+  85 0074 8FB10004		lw 	$s1, 4($sp)
+  86 0078 8FB00000		lw 	$s0, 0($sp)
+  87 007c 23BD0028		addi 	$sp, $sp, A_FRAMESIZE
+  88 0080               
+  89 0080 03E00008		jr	$ra			# Return to the caller.
 
 
 A_FRAMESIZE        = 00000028   
 add_ascii_numbers    00000000 RG text 
-addition_loop        0000003C R  text 
-done_adding          0000006C R  text 
+addition_loop        00000038 R  text 
+done_adding          00000058 R  text 

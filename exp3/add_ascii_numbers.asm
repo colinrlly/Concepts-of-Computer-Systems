@@ -51,30 +51,24 @@ A_FRAMESIZE = 40
         lw      $s2, 8($a0)     # get address of result
         lw      $s3, 12($a0)    # get length of strings
 
-        move    $s4, $zero      # initialize carry to 0
+        #addi    $s3, $s3, -1    # decrement length
 
 addition_loop:
-                                # exit when there are no more digits
-        beq     $s2, $zero, done_adding
+                                # branch when length is 0
+        beq     $s3, $zero, done_adding
+
+        add    $s4, $s0, $s3    # get effective first num digit pointer
+        addi   $s4, $s4, -1
+        add    $s6, $s2, $s3    # get effective result digit pointer
+
+        lb      $s7, 0($s4)     # get first digit of first num
+        sb      $s7, 0($s6)     # store the first digit in result
         
-        add     $s5, $s0, $s3   # use digit $s3 away from beg of first num
-        add     $s6, $s1, $s3   # use digit $s3 away from beg of second num
-        add     $s7, $s2, $s3   # use digit #s3 away from beg of result
-
-        lb      $t1, 0($s5)     # get the value of the digit in first number
-        lb      $t2, 0($s6)     # get the value of the digit in second number
-
-        add     $t3, $t1, $t2   # add two digits together
-        addi    $t3, $t3, -48   # subtract 48 to get correct ascii
-        add     $t3, $t3, $s4   # add the carry
-
-        sb      $t3, 0($s7)     # store the calulated digit in the result
-
-        addi    $s3, $s3, -1    # decrement the digit pointer
-        j       addition_loop   # go back to beginning of loop
+        addi    $s3, $s3, -1    # decrement length num
+        
+        j addition_loop
 
 done_adding:
-                
 
 # ###### END STUDENT CODE BLOCK 1 ######
 
