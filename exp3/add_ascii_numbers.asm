@@ -51,15 +51,17 @@ A_FRAMESIZE = 40
         lw      $s2, 8($a0)     # get address of result
         lw      $s3, 12($a0)    # get length of strings
 
-        #addi    $s3, $s3, -1    # decrement length
+        addi    $t2, $zero, -1   
+        addi    $s3, $s3, -1    # decrement length
+        move    $t1, $s3
 
 addition_loop:
                                 # branch when length is 0
-        beq     $s3, $zero, done_adding
+        beq     $s3, $t2, done_adding
 
         add    $s4, $s0, $s3    # get effective first num digit pointer
-        addi   $s4, $s4, -1
-        add    $s6, $s2, $s3    # get effective result digit pointer
+        sub    $s6, $t1, $s3
+        add    $s6, $s2, $s6    # get effective result digit pointer
 
         lb      $s7, 0($s4)     # get first digit of first num
         sb      $s7, 0($s6)     # store the first digit in result

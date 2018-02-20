@@ -51,45 +51,47 @@
   51 0030 8C920008	        lw      $s2, 8($a0)     # get address of result
   52 0034 8C93000C	        lw      $s3, 12($a0)    # get length of strings
   53 0038               
-  54 0038                       #addi    $s3, $s3, -1    # decrement length
-  55 0038               
-  56 0038               addition_loop:
-  57 0038                                               # branch when length is 0
-  58 0038 12600007	        beq     $s3, $zero, done_adding
-  59 003c               
-  60 003c 0213A020	        add    $s4, $s0, $s3    # get effective first num digit pointer
-  61 0040 2294FFFF	        addi   $s4, $s4, -1
-  62 0044 0253B020	        add    $s6, $s2, $s3    # get effective result digit pointer
-  63 0048               
-  64 0048 82970000	        lb      $s7, 0($s4)     # get first digit of first num
-  65 004c A2D70000	        sb      $s7, 0($s6)     # store the first digit in result
-  66 0050                       
-  67 0050 2273FFFF	        addi    $s3, $s3, -1    # decrement length num
-  68 0054                       
-  69 0054 0800000E	        j addition_loop
-  70 0058               
-  71 0058               done_adding:
-  72 0058               
-  73 0058               # ###### END STUDENT CODE BLOCK 1 ######
-  74 0058               
-  75 0058               #
-  76 0058               # Restore registers ra and s0 - s7 from the stack.
-  77 0058               #
-  78 0058 8FBF0024		lw 	$ra, -4+A_FRAMESIZE($sp)
-  79 005c 8FB7001C		lw 	$s7, 28($sp)
-  80 0060 8FB60018		lw 	$s6, 24($sp)
-  81 0064 8FB50014		lw 	$s5, 20($sp)
-  82 0068 8FB40010		lw 	$s4, 16($sp)
-  83 006c 8FB3000C		lw 	$s3, 12($sp)
-  84 0070 8FB20008		lw 	$s2, 8($sp)
-  85 0074 8FB10004		lw 	$s1, 4($sp)
-  86 0078 8FB00000		lw 	$s0, 0($sp)
-  87 007c 23BD0028		addi 	$sp, $sp, A_FRAMESIZE
-  88 0080               
-  89 0080 03E00008		jr	$ra			# Return to the caller.
+  54 0038 200AFFFF	        addi    $t2, $zero, -1   
+  55 003c 2273FFFF	        addi    $s3, $s3, -1    # decrement length
+  56 0040 02604821	        move    $t1, $s3
+  57 0044               
+  58 0044               addition_loop:
+  59 0044                                               # branch when length is 0
+  60 0044 126A0007	        beq     $s3, $t2, done_adding
+  61 0048               
+  62 0048 0213A020	        add    $s4, $s0, $s3    # get effective first num digit pointer
+  63 004c 0133B022	        sub    $s6, $t1, $s3
+  64 0050 0256B020	        add    $s6, $s2, $s6    # get effective result digit pointer
+  65 0054               
+  66 0054 82970000	        lb      $s7, 0($s4)     # get first digit of first num
+  67 0058 A2D70000	        sb      $s7, 0($s6)     # store the first digit in result
+  68 005c                       
+  69 005c 2273FFFF	        addi    $s3, $s3, -1    # decrement length num
+  70 0060                       
+  71 0060 08000011	        j addition_loop
+  72 0064               
+  73 0064               done_adding:
+  74 0064               
+  75 0064               # ###### END STUDENT CODE BLOCK 1 ######
+  76 0064               
+  77 0064               #
+  78 0064               # Restore registers ra and s0 - s7 from the stack.
+  79 0064               #
+  80 0064 8FBF0024		lw 	$ra, -4+A_FRAMESIZE($sp)
+  81 0068 8FB7001C		lw 	$s7, 28($sp)
+  82 006c 8FB60018		lw 	$s6, 24($sp)
+  83 0070 8FB50014		lw 	$s5, 20($sp)
+  84 0074 8FB40010		lw 	$s4, 16($sp)
+  85 0078 8FB3000C		lw 	$s3, 12($sp)
+  86 007c 8FB20008		lw 	$s2, 8($sp)
+  87 0080 8FB10004		lw 	$s1, 4($sp)
+  88 0084 8FB00000		lw 	$s0, 0($sp)
+  89 0088 23BD0028		addi 	$sp, $sp, A_FRAMESIZE
+  90 008c               
+  91 008c 03E00008		jr	$ra			# Return to the caller.
 
 
 A_FRAMESIZE        = 00000028   
 add_ascii_numbers    00000000 RG text 
-addition_loop        00000038 R  text 
-done_adding          00000058 R  text 
+addition_loop        00000044 R  text 
+done_adding          00000064 R  text 
