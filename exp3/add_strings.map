@@ -38,17 +38,19 @@ Module:  add_strings.obj
           PRINT_INT          A   0x00000001
 
 Module:  add_ascii_numbers.obj
- Text segment:  144 bytes, load point 0x004000d8
+ Text segment:  192 bytes, load point 0x004000d8
  Symbols:
                Name Section Mode    Value
       addition_loop   Text   R   0x0040011c
-        done_adding   Text   R   0x0040013c
+        done_adding   Text   R   0x0040016c
   add_ascii_numbers   Text   RG  0x004000d8
         A_FRAMESIZE          A   0x00000028
+              carry   Text   R   0x00400160
+           no_carry   Text   R   0x00400158
 
 Module:  r2k_startup.obj
- Text segment:  36 bytes, load point 0x00400168
+ Text segment:  36 bytes, load point 0x00400198
  Symbols:
                Name Section Mode    Value
           SYS_EXIT2          A   0x00000011
-     __r2k__entry__   Text   RG  0x0040016c
+     __r2k__entry__   Text   RG  0x0040019c

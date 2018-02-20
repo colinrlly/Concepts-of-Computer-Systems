@@ -51,20 +51,39 @@ A_FRAMESIZE = 40
         lw      $s2, 8($a0)     # get address of result
         lw      $s3, 12($a0)    # get length of strings
 
-        addi    $t2, $zero, -1   
         addi    $s3, $s3, -1    # decrement length
-        move    $t1, $s3
+        addi    $t2, $zero, -1  # stop loop when length == -1
+        move    $t4, $zero      # initialize carry
 
 addition_loop:
                                 # branch when length is 0
         beq     $s3, $t2, done_adding
 
-        add    $s4, $s0, $s3    # get effective first num digit pointer
-        sub    $s6, $t1, $s3
-        add    $s6, $s2, $s6    # get effective result digit pointer
+        add     $s4, $s0, $s3   # get effective first num digit pointer
+        add     $s5, $s1, $s3   # get effective second num digit pointer
+        add     $s6, $s2, $s3   # get effective result digit pointer
 
-        lb      $s7, 0($s4)     # get first digit of first num
-        sb      $s7, 0($s6)     # store the first digit in result
+        lb      $s7, 0($s4)     # get digit of first number
+        lb      $t1, 0($s5)     # get digit of second number
+        
+        add     $t3, $s7, $t1   # add the two numbers
+        addi    $t3, $t3, -48   # get rid of extra 48
+        add     $t3, $t3, $t4   # add carry
+
+        addi    $t3, $t3, -58   # calculating the next carry
+        slt     $t5, $t3, $zero # set t5 1 if t3 < 0
+                                # branch if t3 < 0
+        bne     $t5, $zero, no_carry
+        addi    $t3, $t3, 48    # if there is a carry t3 is amt > #58
+        addi    $t4, $zero, 1   # set carry to 1
+        j       carry           # skip no_carry code
+        
+no_carry:
+        addi    $t3, $t3, 58    # there is no carry so just add 57 back
+        move    $t4, $zero      # carry is 0
+
+carry:
+        sb      $t3, 0($s6)     # store the first digit in result
         
         addi    $s3, $s3, -1    # decrement length num
         
