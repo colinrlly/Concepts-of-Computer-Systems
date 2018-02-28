@@ -682,67 +682,95 @@
  634 0310               #
  635 0310               # Note that this does not involve any polymorphic functions.
  636 0310               #
- 637 0310               #***** END STUDENT CODE BLOCK 2 **********************************
- 638 0310               
- 639 0310 34020004		li 	$v0, PRINT_STRING	# print ','
- 640 0314 3C040000		la 	$a0, comma_string
-     0318 34840000
- 641 031c 0000000C		syscall
- 642 0320               
- 643 0320               #***** BEGIN STUDENT CODE BLOCK 3 ********************************
- 644 0320               #
- 645 0320               # Print the figure's height using PRINT_INT. At this point, s0 contains
- 646 0320               # the address of the figure object, and shouldn't be changed.
- 647 0320               #
- 648 0320               # Note that this does not involve any polymorphic functions.
- 649 0320               #
- 650 0320               #***** END STUDENT CODE BLOCK 3 **********************************
- 651 0320               	
- 652 0320 34020004		li 	$v0, PRINT_STRING 	# print ') - area = '
- 653 0324 3C040000		la 	$a0, area_string
-     0328 34840000
- 654 032c 0000000C		syscall
- 655 0330               
- 656 0330               #***** BEGIN STUDENT CODE BLOCK 4 ********************************
- 657 0330               #
- 658 0330               # Print the figure's area using PRINT_INT. At this point, s0 contains
- 659 0330               # the address of the figure object, and shouldn't be changed.
- 660 0330               #
- 661 0330               #***** END STUDENT CODE BLOCK 4 **********************************
- 662 0330               	
- 663 0330 34020004		li 	$v0, PRINT_STRING	# print '; perimeter = '
- 664 0334 3C040000		la 	$a0, perimeter_string
-     0338 34840000
- 665 033c 0000000C		syscall
- 666 0340               
- 667 0340               #***** BEGIN STUDENT CODE BLOCK 5 ********************************
- 668 0340               #
- 669 0340               # Print the figure's perimeter using PRINT_INT. At this point, s0
- 670 0340               # contains the address of the figure object, and shouldn't be changed.
- 671 0340               #
- 672 0340               #***** END STUDENT CODE BLOCK 5 **********************************
- 673 0340               
- 674 0340               	
- 675 0340 34020004		li 	$v0, PRINT_STRING	# print newline
- 676 0344 3C040000		la 	$a0, new_line
-     0348 34840000
- 677 034c 0000000C		syscall
- 678 0350               
- 679 0350               	#
- 680 0350               	# Restore all the S registers
- 681 0350               	#
- 682 0350 8FBF0024		lw	$ra, -4+FRAMESIZE_40($sp)
- 683 0354 8FB70020		lw	$s7, -8+FRAMESIZE_40($sp)
- 684 0358 8FB6001C		lw	$s6, -12+FRAMESIZE_40($sp)
- 685 035c 8FB50018		lw	$s5, -16+FRAMESIZE_40($sp)
- 686 0360 8FB40014		lw	$s4, -20+FRAMESIZE_40($sp)
- 687 0364 8FB30010		lw	$s3, -24+FRAMESIZE_40($sp)
- 688 0368 8FB2000C		lw	$s2, -28+FRAMESIZE_40($sp)
- 689 036c 8FB10008		lw	$s1, -32+FRAMESIZE_40($sp)
- 690 0370 8FB00004		lw	$s0, -36+FRAMESIZE_40($sp)
- 691 0374 23BD0028		addi	$sp, $sp, FRAMESIZE_40
- 692 0378               
- 693 0378 03E00008		jr	$ra
+ 637 0310               
+ 638 0310 34020001	        li      $v0, 1          # load indicator for PRINT_INT syscall
+ 639 0314 8E040004	        lw      $a0, 4($s0)     # load width for PRINT_INT syscall
+ 640 0318 0000000C	        syscall
+ 641 031c               
+ 642 031c               #***** END STUDENT CODE BLOCK 2 **********************************
+ 643 031c               
+ 644 031c 34020004		li 	$v0, PRINT_STRING	# print ','
+ 645 0320 3C040000		la 	$a0, comma_string
+     0324 34840000
+ 646 0328 0000000C		syscall
+ 647 032c               
+ 648 032c               #***** BEGIN STUDENT CODE BLOCK 3 ********************************
+ 649 032c               #
+ 650 032c               # Print the figure's height using PRINT_INT. At this point, s0 contains
+ 651 032c               # the address of the figure object, and shouldn't be changed.
+ 652 032c               #
+ 653 032c               # Note that this does not involve any polymorphic functions.
+ 654 032c               #
+ 655 032c               
+ 656 032c 34020001	        li      $v0, 1          # load indicator for PRINT_INT syscall
+ 657 0330 8E040008	        lw      $a0, 8($s0)     # load height for PRINT_INT syscall
+ 658 0334 0000000C	        syscall
+ 659 0338               
+ 660 0338               #***** END STUDENT CODE BLOCK 3 **********************************
+ 661 0338               	
+ 662 0338 34020004		li 	$v0, PRINT_STRING 	# print ') - area = '
+ 663 033c 3C040000		la 	$a0, area_string
+     0340 34840000
+ 664 0344 0000000C		syscall
+ 665 0348               
+ 666 0348               #***** BEGIN STUDENT CODE BLOCK 4 ********************************
+ 667 0348               #
+ 668 0348               # Print the figure's area using PRINT_INT. At this point, s0 contains
+ 669 0348               # the address of the figure object, and shouldn't be changed.
+ 670 0348               #
+ 671 0348               
+ 672 0348 8E110000	        lw      $s1, 0($s0)     # get address of virtual function table  
+ 673 034c 8E310000	        lw      $s1, 0($s1)     # get address of proper area function
+ 674 0350 02002021	        move    $a0, $s0        # set the argument for the area function
+ 675 0354 0220F809	        jalr    $s1             # run polymorphic area function
+ 676 0358 00402021	        move    $a0, $v0        # load area for PRINT_INT syscall
+ 677 035c 34020001	        li      $v0, 1          # load indicator for PRINT_INT
+ 678 0360 0000000C	        syscall
+ 679 0364               
+ 680 0364               #***** END STUDENT CODE BLOCK 4 **********************************
+ 681 0364               	
+ 682 0364 34020004		li 	$v0, PRINT_STRING	# print '; perimeter = '
+ 683 0368 3C040000		la 	$a0, perimeter_string
+     036c 34840000
+ 684 0370 0000000C		syscall
+ 685 0374               
+ 686 0374               #***** BEGIN STUDENT CODE BLOCK 5 ********************************
+ 687 0374               #
+ 688 0374               # Print the figure's perimeter using PRINT_INT. At this point, s0
+ 689 0374               # contains the address of the figure object, and shouldn't be changed.
+ 690 0374               #
+ 691 0374               
+ 692 0374 8E110000	        lw      $s1, 0($s0)     # get address of virtual function table
+ 693 0378 8E310004	        lw      $s1, 4($s1)     # get address of proper perimeter function
+ 694 037c 02002021	        move    $a0, $s0        # set the argument for the area function
+ 695 0380 0220F809	        jalr    $s1             # run polymorphic perimeter function
+ 696 0384 00402021	        move    $a0, $v0        # load perimeter for PRINT_INT syscall
+ 697 0388 34020001	        li      $v0, 1          # load indicator for PRINT_INT
+ 698 038c 0000000C	        syscall
+ 699 0390               
+ 700 0390               #***** END STUDENT CODE BLOCK 5 **********************************
+ 701 0390               
+ 702 0390               	
+ 703 0390 34020004		li 	$v0, PRINT_STRING	# print newline
+ 704 0394 3C040000		la 	$a0, new_line
+     0398 34840000
+ 705 039c 0000000C		syscall
+ 706 03a0               
+ 707 03a0               	#
+ 708 03a0               	# Restore all the S registers
+ 709 03a0               	#
+ 710 03a0 8FBF0024		lw	$ra, -4+FRAMESIZE_40($sp)
+ 711 03a4 8FB70020		lw	$s7, -8+FRAMESIZE_40($sp)
+ 712 03a8 8FB6001C		lw	$s6, -12+FRAMESIZE_40($sp)
+ 713 03ac 8FB50018		lw	$s5, -16+FRAMESIZE_40($sp)
+ 714 03b0 8FB40014		lw	$s4, -20+FRAMESIZE_40($sp)
+ 715 03b4 8FB30010		lw	$s3, -24+FRAMESIZE_40($sp)
+ 716 03b8 8FB2000C		lw	$s2, -28+FRAMESIZE_40($sp)
+ 717 03bc 8FB10008		lw	$s1, -32+FRAMESIZE_40($sp)
+ 718 03c0 8FB00004		lw	$s0, -36+FRAMESIZE_40($sp)
+ 719 03c4 23BD0028		addi	$sp, $sp, FRAMESIZE_40
+ 720 03c8               
+ 721 03c8 03E00008		jr	$ra
 
 
 FRAMESIZE_24              = 00000018   

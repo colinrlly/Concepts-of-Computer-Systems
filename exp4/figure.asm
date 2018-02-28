@@ -634,6 +634,11 @@ print_rest:
 #
 # Note that this does not involve any polymorphic functions.
 #
+
+        li      $v0, 1          # load indicator for PRINT_INT syscall
+        lw      $a0, 4($s0)     # load width for PRINT_INT syscall
+        syscall
+
 #***** END STUDENT CODE BLOCK 2 **********************************
 
 	li 	$v0, PRINT_STRING	# print ','
@@ -647,6 +652,11 @@ print_rest:
 #
 # Note that this does not involve any polymorphic functions.
 #
+
+        li      $v0, 1          # load indicator for PRINT_INT syscall
+        lw      $a0, 8($s0)     # load height for PRINT_INT syscall
+        syscall
+
 #***** END STUDENT CODE BLOCK 3 **********************************
 	
 	li 	$v0, PRINT_STRING 	# print ') - area = '
@@ -658,6 +668,15 @@ print_rest:
 # Print the figure's area using PRINT_INT. At this point, s0 contains
 # the address of the figure object, and shouldn't be changed.
 #
+
+        lw      $s1, 0($s0)     # get address of virtual function table  
+        lw      $s1, 0($s1)     # get address of proper area function
+        move    $a0, $s0        # set the argument for the area function
+        jalr    $s1             # run polymorphic area function
+        move    $a0, $v0        # load area for PRINT_INT syscall
+        li      $v0, 1          # load indicator for PRINT_INT
+        syscall
+
 #***** END STUDENT CODE BLOCK 4 **********************************
 	
 	li 	$v0, PRINT_STRING	# print '; perimeter = '
@@ -669,6 +688,15 @@ print_rest:
 # Print the figure's perimeter using PRINT_INT. At this point, s0
 # contains the address of the figure object, and shouldn't be changed.
 #
+
+        lw      $s1, 0($s0)     # get address of virtual function table
+        lw      $s1, 4($s1)     # get address of proper perimeter function
+        move    $a0, $s0        # set the argument for the area function
+        jalr    $s1             # run polymorphic perimeter function
+        move    $a0, $v0        # load perimeter for PRINT_INT syscall
+        li      $v0, 1          # load indicator for PRINT_INT
+        syscall
+
 #***** END STUDENT CODE BLOCK 5 **********************************
 
 	
