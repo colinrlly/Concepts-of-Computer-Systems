@@ -313,20 +313,17 @@ block_area:
         addi    $sp, $sp, -FRAMESIZE_8
         sw      $ra, -4+FRAMESIZE_8($sp)
 
-        li      $t9, PI         # get our int approx. for PI = 3
-        
-        jal     block_diameter # get my diameter in v0
-        
-        div     $t0, $v0, 2     # t0 = radius
-        mul     $t1, $t0, $t0   # t1 = radius squared
-        mul     $v0, $t1, $t9   # v0 = PI * radius squared
+        lw      $t1, 4($a0)     # get block width
+        lw      $t2, 8($a0)     # get block height 
+        mult    $t1, $t2        # multiply width * height
+        mflo    $v0             
 
         lw      $ra, -4+FRAMESIZE_8($sp)        # restore ra from stack
         addi    $sp, $sp, FRAMESIZE_8
         jr      $ra
 
 # 
-# Name:         block_parimeter
+# Name:         block_perimeter
 #
 # Descirption:  Computer the perimeter of the block figure
 #
@@ -338,11 +335,13 @@ block_perimeter:
         addi    $sp, $sp, -FRAMESIZE_8
         sw      $ra, -4+FRAMESIZE_8($sp)
 
-        li      $t9, PI         # get our int approx. for PI = 3
-
-        jal     block_diameter  # get my diameter in v0
-
-        mul     $v0, $v0, $t9   # v0 = P * diameter
+        lw      $t2, 4($a0)     # get block width
+        lw      $t3, 8($a0)     # get block height
+        addi    $v0, $zero, 0
+        add     $v0, $v0, $t2   # perimeter is h+h+w+w
+        add     $v0, $v0, $t2
+        add     $v0, $v0, $t3
+        add     $v0, $v0, $t3
 
         lw      $ra, -4+FRAMESIZE_8($sp)        # restore ra from stack
         addi    $sp, $sp, FRAMESIZE_8

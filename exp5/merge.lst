@@ -1,0 +1,120 @@
+   1 0000               #
+   2 0000               # FILE:         $File$
+   3 0000               # AUTHOR:       Phil White, RIT 2016
+   4 0000               #               
+   5 0000               # CONTRIBUTORS:
+   6 0000               #		<<<YOUR NAME HERE>>>
+   7 0000               #
+   8 0000               # DESCRIPTION:
+   9 0000               #	This file contains the merge function of mergesort
+  10 0000               #
+  11 0000               
+  12 0000               #-------------------------------
+  13 0000               
+  14 0000               #
+  15 0000               # Numeric Constants
+  16 0000               #
+  17 0000               
+  18 0000               PRINT_STRING = 4
+  19 0000               PRINT_INT = 1
+  20 0000               
+  21 0000               
+  22 0000               #***** BEGIN STUDENT CODE BLOCK 2 ***************************
+  23 0000               
+  24 0000               
+  25 0000               #
+  26 0000               # Make sure to add any .globl that you need here
+  27 0000               #
+  28 0000               
+  29 0000                   .globl  merge
+  30 0000                   .globl  sort
+  31 0000               
+  32 0000               #
+  33 0000               # Name:         merge
+  34 0000               # Description:  takes two individually sorted areas of an array and
+  35 0000               #		merges them into a single sorted area
+  36 0000               #
+  37 0000               #		The two areas are defined between (inclusive)
+  38 0000               #		area1:	low   - mid
+  39 0000               #		area2:	mid+1 - high
+  40 0000               #
+  41 0000               #		Note that the area will be contiguous in the array
+  42 0000               #
+  43 0000               # Arguments:    a0:     a parameter block containing 3 values
+  44 0000               #			- the address of the array to sort
+  45 0000               #			- the address of the scrap array needed by merge
+  46 0000               #			- the address of the compare function to use
+  47 0000               #			  when ordering data
+  48 0000               #               a1:     the index of the first element of the area
+  49 0000               #               a2:     the index of the last element of the area
+  50 0000               #               a3:     the index of the middle element of the area
+  51 0000               # Returns:      none
+  52 0000               # Destroys:     t0,t1
+  53 0000               #
+  54 0000               
+  55 0000               merge:
+  56 0000               # set a current location at the front of each sub-array
+  57 0000                       # t0 = location of the array to sort
+  58 0000 80880000	        lb      $t0, 0($a0)     # get address of array to sort
+  59 0004                     
+  60 0004                       # multiply by 8 to get displacement of bytes
+  61 0004 200B0008	        addi    $t3, $zero, 8   # get the number 8 in a register
+  62 0008 00AB0018	        mult    $a1, $t3        # multiply the index of first sub-array by 8
+  63 000c 00004812	        mflo    $t1             
+  64 0010                       
+  65 0010                       # t1 = location of the front of the first sub-array
+  66 0010 01094820	        add     $t1, $t0, $t1   # add index of first sub-array to front of array
+  67 0014               
+  68 0014                       # get index of second sub-array
+  69 0014 20EA0001	        addi    $t2, $a3, 1     # add one to the middle index
+  70 0018 014B0018	        mult    $t2, $t3        # multiply the index of second sub-array by 8
+  71 001c 00005012	        mflo    $t2             
+  72 0020                       
+  73 0020                       # t2 = location of the front of the second sub-array
+  74 0020 010A5020	        add     $t2, $t0, $t2   # add index of second sub-array to front of array
+  75 0024               
+  76 0024                       # t4 = location of middle (end of first sub-array)
+  77 0024 00EB0018	        mult    $a3, $t3        # multiply index of middle by 8
+  78 0028 00006012	        mflo    $t4
+  79 002c 010C6020	        add     $t4, $t0, $t4   # add index of middle to front of array 
+  80 0030                       
+  81 0030                       # t5 = location of high   (end of second sub-array)
+  82 0030 00CB0018	        mult    $a2, $t3        # multiply index of high by 8
+  83 0034 00006812	        mflo    $t5
+  84 0038 010D6820	        add     $t5, $t0, $t5   # add index of high to front of array
+  85 003c               
+  86 003c               
+  87 003c                       # t0 = address of the array
+  88 003c                       # t1 = address of the front of the first sub-array
+  89 003c                       # t2 = address of the front of the second sub-array
+  90 003c                       # t3 = the number 8
+  91 003c                       # t4 = address of the middle of the array
+  92 003c                       # t5 = address of the end of the array (high)
+  93 003c               # as long as both sub-arrays are not empty
+  94 003c                       
+  95 003c                       # check if either sub array is empty
+  96 003c                       # 
+  97 003c                               # if either one is, jump to the part where we copy the rest of the other sub-array over
+  98 003c                # call the compare function on the value at the current location of each sub-array
+  99 003c                       # t2 = result of the compare function
+ 100 003c                # move the value that is suppose to come first into the scrap array
+ 101 003c                       # perform a load and store from the location of the smaller element to the proper index of the scrap array
+ 102 003c                # advance the current location for sub-array that had that element
+ 103 003c                       # perform an addi on the current location of the sub-array
+ 104 003c               # once one of the sub-arrays is empty, move the remaining elements in the other sub-array into the scarap array
+ 105 003c                       # case for first sub-array being empty
+ 106 003c                       # case for second sub-array being empty
+ 107 003c               # once that is done, copy the scrap array back into the main array at the location that the two sub-arrays occupied
+ 108 003c                       # loop through the scrap array and copy everything back into the original location
+ 109 003c               
+ 110 003c               # ********** END STUDENT CODE BLOCK 2 **********
+ 111 003c               
+ 112 003c               #
+ 113 003c               # End of Merge routine.
+ 114 003c               #
+
+
+PRINT_INT     = 00000001   
+PRINT_STRING  = 00000004   
+merge           00000000 RG text 
+sort            ******** XG
