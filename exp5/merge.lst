@@ -120,7 +120,7 @@
  120 0078 01AA782A	        slt     $t7, $t5, $t2   # set if front of second array is greater than its end
  121 007c                       
  122 007c 15C00014	        bne     $t6, $zero, first_empty         # check if first is empty
- 123 0080 15E00013	        bne     $t7, $zero, second_empty        # check if second is empty
+ 123 0080 15E0001A	        bne     $t7, $zero, second_empty        # check if second is empty
  124 0084                 
  125 0084 8D2E0000	        lw      $t6, 0($t1)     # t6 = first element in first sub-array
  126 0088 8D4F0000	        lw      $t7, 0($t2)     # t7 = first element in second sub-array
@@ -155,52 +155,70 @@
  155 00cc 0800001D	        j       while_no_empty
  156 00d0               
  157 00d0               first_empty:
- 158 00d0                  
- 159 00d0               second_empty:
- 160 00d0               
- 161 00d0               done:
- 162 00d0                       # get front of scrap array (s2)
- 163 00d0                       # front of original array (s3)
- 164 00d0 8E540000	        lw      $s4, 0($s2)     # copy first element from scrap array to original
- 165 00d4 AE740000	        sw      $s4, 0($s3)
- 166 00d8                       # iterate both
- 167 00d8 22520004	        addi    $s2, $s2, 4     # increment both pointers
- 168 00dc 22730004	        addi    $s3, $s3, 4
- 169 00e0                       # until low > high
- 170 00e0 01B3A82A	        slt     $s5, $t5, $s3   # set if end is less than front
- 171 00e4 12A0FFFA	        beq     $s5, $zero, done
- 172 00e8                       
- 173 00e8               #
- 174 00e8               # Restore registrs ra and s0 - s7 from the stack.
- 175 00e8               #
- 176 00e8               
- 177 00e8 8FBF002C	        lw      $ra, -4+A_FRAMESIZE($sp)
- 178 00ec 8FB7001C	        lw      $s7, 28($sp)
- 179 00f0 8FB60018	        lw      $s6, 24($sp)
- 180 00f4 8FB50014	        lw      $s5, 20($sp)
- 181 00f8 8FB40010	        lw      $s4, 16($sp)
- 182 00fc 8FB3000C	        lw      $s3, 12($sp)
- 183 0100 8FB20008	        lw      $s2, 8($sp)
- 184 0104 8FB10004	        lw      $s1, 4($sp)
- 185 0108 8FB00000	        lw      $s0, 0($sp)
- 186 010c 23BD0030	        addi    $sp, $sp, A_FRAMESIZE
- 187 0110               
- 188 0110 03E00008	        jr      $ra
- 189 0114               # ********** END STUDENT CODE BLOCK 2 **********
- 190 0114               
- 191 0114               #
- 192 0114               # End of Merge routine.
- 193 0114               #
+ 158 00d0 8D540000	        lw      $s4, 0($t2)     # move first element of second array to scrap
+ 159 00d4 AE340000	        sw      $s4, 0($s1)
+ 160 00d8               
+ 161 00d8 214A0004	        addi    $t2, $t2, 4     # increment second sub-array and scrap
+ 162 00dc 22310004	        addi    $s1, $s1, 4
+ 163 00e0               
+ 164 00e0 01AAA82A	        slt     $s5, $t5, $t2   # loop if second sub-array isn't empty
+ 165 00e4 12A0FFFA	        beq     $s5, $zero, first_empty
+ 166 00e8               
+ 167 00e8 08000041	        j       done
+ 168 00ec               
+ 169 00ec               second_empty:
+ 170 00ec 8D340000	        lw      $s4, 0($t1)     # move first element of first array to scrap
+ 171 00f0 AE340000	        sw      $s4, 0($s1)
+ 172 00f4               
+ 173 00f4 21290004	        addi    $t1, $t1, 4     # increment first sub-array and scrap
+ 174 00f8 22310004	        addi    $s1, $s1, 4
+ 175 00fc               
+ 176 00fc 0189A82A	        slt     $s5, $t4, $t1   # loop if first sub-array isn't empty
+ 177 0100 12A0FFFA	        beq     $s5, $zero, second_empty
+ 178 0104               
+ 179 0104               done:
+ 180 0104                       # get front of scrap array (s2)
+ 181 0104                       # front of original array (s3)
+ 182 0104 8E540000	        lw      $s4, 0($s2)     # copy first element from scrap array to original
+ 183 0108 AE740000	        sw      $s4, 0($s3)
+ 184 010c                       # iterate both
+ 185 010c 22520004	        addi    $s2, $s2, 4     # increment both pointers
+ 186 0110 22730004	        addi    $s3, $s3, 4
+ 187 0114                       # until low > high
+ 188 0114 01B3A82A	        slt     $s5, $t5, $s3   # set if end is less than front
+ 189 0118 12A0FFFA	        beq     $s5, $zero, done
+ 190 011c                       
+ 191 011c               #
+ 192 011c               # Restore registrs ra and s0 - s7 from the stack.
+ 193 011c               #
+ 194 011c               
+ 195 011c 8FBF002C	        lw      $ra, -4+A_FRAMESIZE($sp)
+ 196 0120 8FB7001C	        lw      $s7, 28($sp)
+ 197 0124 8FB60018	        lw      $s6, 24($sp)
+ 198 0128 8FB50014	        lw      $s5, 20($sp)
+ 199 012c 8FB40010	        lw      $s4, 16($sp)
+ 200 0130 8FB3000C	        lw      $s3, 12($sp)
+ 201 0134 8FB20008	        lw      $s2, 8($sp)
+ 202 0138 8FB10004	        lw      $s1, 4($sp)
+ 203 013c 8FB00000	        lw      $s0, 0($sp)
+ 204 0140 23BD0030	        addi    $sp, $sp, A_FRAMESIZE
+ 205 0144               
+ 206 0144 03E00008	        jr      $ra
+ 207 0148               # ********** END STUDENT CODE BLOCK 2 **********
+ 208 0148               
+ 209 0148               #
+ 210 0148               # End of Merge routine.
+ 211 0148               #
 
 
 A_FRAMESIZE     = 00000030   
 PRINT_INT       = 00000001   
 PRINT_STRING    = 00000004   
 bottom_of_loop    000000C8 R  text 
-done              000000D0 R  text 
+done              00000104 R  text 
 first_empty       000000D0 R  text 
 merge             00000000 RG text 
-second_empty      000000D0 R  text 
+second_empty      000000EC R  text 
 second_first      000000BC R  text 
 sort              ******** XG
 while_no_empty    00000074 R  text 

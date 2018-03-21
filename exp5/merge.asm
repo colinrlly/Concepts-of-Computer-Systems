@@ -155,8 +155,26 @@ bottom_of_loop:
         j       while_no_empty
 
 first_empty:
-   
+        lw      $s4, 0($t2)     # move first element of second array to scrap
+        sw      $s4, 0($s1)
+
+        addi    $t2, $t2, 4     # increment second sub-array and scrap
+        addi    $s1, $s1, 4
+
+        slt     $s5, $t5, $t2   # loop if second sub-array isn't empty
+        beq     $s5, $zero, first_empty
+
+        j       done
+
 second_empty:
+        lw      $s4, 0($t1)     # move first element of first array to scrap
+        sw      $s4, 0($s1)
+
+        addi    $t1, $t1, 4     # increment first sub-array and scrap
+        addi    $s1, $s1, 4
+
+        slt     $s5, $t4, $t1   # loop if first sub-array isn't empty
+        beq     $s5, $zero, second_empty
 
 done:
         # get front of scrap array (s2)
