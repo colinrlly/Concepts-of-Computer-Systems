@@ -56,23 +56,30 @@ Module:  merge_sort.obj
              before   Data   R   0x100001e4
 
 Module:  merge.obj
- Text segment:  60 bytes, load point 0x00400400
+ Text segment:  276 bytes, load point 0x00400400
  Symbols:
                Name Section Mode    Value
+               done   Text   R   0x004004d0
+        A_FRAMESIZE          A   0x00000030
               merge   Text   RG  0x00400400
+        first_empty   Text   R   0x004004d0
+     bottom_of_loop   Text   R   0x004004c8
+       second_first   Text   R   0x004004bc
        PRINT_STRING          A   0x00000004
+       second_empty   Text   R   0x004004d0
+     while_no_empty   Text   R   0x00400474
           PRINT_INT          A   0x00000001
 
 Module:  sort.obj
  Symbols:
                Name Section Mode    Value
-               sort   Text   RG  0x0040043c
+               sort   Text   RG  0x00400514
        PRINT_STRING          A   0x00000004
           PRINT_INT          A   0x00000001
 
 Module:  r2k_startup.obj
- Text segment:  36 bytes, load point 0x0040043c
+ Text segment:  36 bytes, load point 0x00400514
  Symbols:
                Name Section Mode    Value
           SYS_EXIT2          A   0x00000011
-     __r2k__entry__   Text   RG  0x00400440
+     __r2k__entry__   Text   RG  0x00400518

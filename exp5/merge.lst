@@ -53,68 +53,154 @@
   53 0000               #
   54 0000               
   55 0000               merge:
-  56 0000               # set a current location at the front of each sub-array
-  57 0000                       # t0 = location of the array to sort
-  58 0000 80880000	        lb      $t0, 0($a0)     # get address of array to sort
-  59 0004                     
-  60 0004                       # multiply by 8 to get displacement of bytes
-  61 0004 200B0008	        addi    $t3, $zero, 8   # get the number 8 in a register
-  62 0008 00AB0018	        mult    $a1, $t3        # multiply the index of first sub-array by 8
-  63 000c 00004812	        mflo    $t1             
-  64 0010                       
-  65 0010                       # t1 = location of the front of the first sub-array
-  66 0010 01094820	        add     $t1, $t0, $t1   # add index of first sub-array to front of array
-  67 0014               
-  68 0014                       # get index of second sub-array
-  69 0014 20EA0001	        addi    $t2, $a3, 1     # add one to the middle index
-  70 0018 014B0018	        mult    $t2, $t3        # multiply the index of second sub-array by 8
-  71 001c 00005012	        mflo    $t2             
-  72 0020                       
-  73 0020                       # t2 = location of the front of the second sub-array
-  74 0020 010A5020	        add     $t2, $t0, $t2   # add index of second sub-array to front of array
-  75 0024               
-  76 0024                       # t4 = location of middle (end of first sub-array)
-  77 0024 00EB0018	        mult    $a3, $t3        # multiply index of middle by 8
-  78 0028 00006012	        mflo    $t4
-  79 002c 010C6020	        add     $t4, $t0, $t4   # add index of middle to front of array 
-  80 0030                       
-  81 0030                       # t5 = location of high   (end of second sub-array)
-  82 0030 00CB0018	        mult    $a2, $t3        # multiply index of high by 8
-  83 0034 00006812	        mflo    $t5
-  84 0038 010D6820	        add     $t5, $t0, $t5   # add index of high to front of array
-  85 003c               
-  86 003c               
-  87 003c                       # t0 = address of the array
-  88 003c                       # t1 = address of the front of the first sub-array
-  89 003c                       # t2 = address of the front of the second sub-array
-  90 003c                       # t3 = the number 8
-  91 003c                       # t4 = address of the middle of the array
-  92 003c                       # t5 = address of the end of the array (high)
-  93 003c               # as long as both sub-arrays are not empty
-  94 003c                       
-  95 003c                       # check if either sub array is empty
-  96 003c                       # 
-  97 003c                               # if either one is, jump to the part where we copy the rest of the other sub-array over
-  98 003c                # call the compare function on the value at the current location of each sub-array
-  99 003c                       # t2 = result of the compare function
- 100 003c                # move the value that is suppose to come first into the scrap array
- 101 003c                       # perform a load and store from the location of the smaller element to the proper index of the scrap array
- 102 003c                # advance the current location for sub-array that had that element
- 103 003c                       # perform an addi on the current location of the sub-array
- 104 003c               # once one of the sub-arrays is empty, move the remaining elements in the other sub-array into the scarap array
- 105 003c                       # case for first sub-array being empty
- 106 003c                       # case for second sub-array being empty
- 107 003c               # once that is done, copy the scrap array back into the main array at the location that the two sub-arrays occupied
- 108 003c                       # loop through the scrap array and copy everything back into the original location
- 109 003c               
- 110 003c               # ********** END STUDENT CODE BLOCK 2 **********
- 111 003c               
- 112 003c               #
- 113 003c               # End of Merge routine.
- 114 003c               #
+  56 0000               A_FRAMESIZE = 48
+  57 0000               
+  58 0000               # 
+  59 0000               # Save registers ra and s0 - s7 on the stack.
+  60 0000               #
+  61 0000               
+  62 0000 23BDFFD0	        addi    $sp, $sp, -A_FRAMESIZE
+  63 0004 AFBF002C	        sw      $ra, -4+A_FRAMESIZE($sp)
+  64 0008 AFB7001C	        sw      $s7, 28($sp)
+  65 000c AFB60018	        sw      $s6, 24($sp)
+  66 0010 AFB50014	        sw      $s5, 20($sp)
+  67 0014 AFB40010	        sw      $s4, 16($sp)
+  68 0018 AFB3000C	        sw      $s3, 12($sp)
+  69 001c AFB20008	        sw      $s2, 8($sp)
+  70 0020 AFB10004	        sw      $s1, 4($sp)
+  71 0024 AFB00000	        sw      $s0, 0($sp)
+  72 0028               
+  73 0028               # set a current location at the front of each sub-array
+  74 0028                       # t0 = location of the array to sort
+  75 0028 8C880000	        lw      $t0, 0($a0)     # get address of array to sort
+  76 002c                     
+  77 002c                       # multiply by 8 to get displacement of bytes
+  78 002c 200B0004	        addi    $t3, $zero, 4   # get the number 4 in a register
+  79 0030 00AB0018	        mult    $a1, $t3        # multiply the index of first sub-array by 8
+  80 0034 00004812	        mflo    $t1             
+  81 0038                       
+  82 0038                       # t1 = location of the front of the first sub-array
+  83 0038 01094820	        add     $t1, $t0, $t1   # add index of first sub-array to front of array
+  84 003c 01209821	        move    $s3, $t1        # copy for moving over data at the end
+  85 0040               
+  86 0040                       # get index of second sub-array
+  87 0040 20EA0001	        addi    $t2, $a3, 1     # add one to the middle index
+  88 0044 014B0018	        mult    $t2, $t3        # multiply the index of second sub-array by 8
+  89 0048 00005012	        mflo    $t2             
+  90 004c                        
+  91 004c                       # t2 = location of the front of the second sub-array
+  92 004c 010A5020	        add     $t2, $t0, $t2   # add index of second sub-array to front of array
+  93 0050               
+  94 0050                       # t4 = location of middle (end of first sub-array)
+  95 0050 00EB0018	        mult    $a3, $t3        # multiply index of middle by 8
+  96 0054 00006012	        mflo    $t4
+  97 0058 010C6020	        add     $t4, $t0, $t4   # add index of middle to front of array 
+  98 005c                       
+  99 005c                       # t5 = location of high   (end of second sub-array)
+ 100 005c 00CB0018	        mult    $a2, $t3        # multiply index of high by 8
+ 101 0060 00006812	        mflo    $t5
+ 102 0064 010D6820	        add     $t5, $t0, $t5   # add index of high to front of array
+ 103 0068               
+ 104 0068                       # s1 = location of front of scrap array
+ 105 0068 8C910004	        lw      $s1, 4($a0)
+ 106 006c 8C920004	        lw      $s2, 4($a0)     # second copy for moving over data at the end
+ 107 0070               
+ 108 0070                       # t0 = address of the array
+ 109 0070                       # t1 = address of the front of the first sub-array
+ 110 0070                       # t2 = address of the front of the second sub-array
+ 111 0070                       # t3 = the number 4
+ 112 0070                       # t4 = address of the middle of the array
+ 113 0070                       # t5 = address of the end of the array (high)
+ 114 0070                       # s1 = address of the front of the scrap array
+ 115 0070                       # s2 = address of the front of the scrap array
+ 116 0070 8C8B0008	        lw      $t3, 8($a0)     # get address of compare function
+ 117 0074               
+ 118 0074               while_no_empty:
+ 119 0074 0189702A	        slt     $t6, $t4, $t1   # set if front of first sub-array is greater than its end
+ 120 0078 01AA782A	        slt     $t7, $t5, $t2   # set if front of second array is greater than its end
+ 121 007c                       
+ 122 007c 15C00014	        bne     $t6, $zero, first_empty         # check if first is empty
+ 123 0080 15E00013	        bne     $t7, $zero, second_empty        # check if second is empty
+ 124 0084                 
+ 125 0084 8D2E0000	        lw      $t6, 0($t1)     # t6 = first element in first sub-array
+ 126 0088 8D4F0000	        lw      $t7, 0($t2)     # t7 = first element in second sub-array
+ 127 008c                       
+ 128 008c AFA40020	        sw      $a0, 32($sp)    # store arguments
+ 129 0090 AFA50024	        sw      $a1, 36($sp)
+ 130 0094                
+ 131 0094 000E2020	        add     $a0, $zero, $t6 # load t6 into a0
+ 132 0098 000F2820	        add     $a1, $zero, $t7 # load t7 into a1
+ 133 009c               
+ 134 009c 0160F809	        jalr    $t3             # run compare function
+ 135 00a0               
+ 136 00a0 8FA40020	        lw      $a0, 32($sp)    # load back arguments
+ 137 00a4 8FA50024	        lw      $a1, 36($sp)
+ 138 00a8                       
+ 139 00a8                       # v0 = return of compare function
+ 140 00a8 10400004	        beq     $v0, $zero, second_first
+ 141 00ac                     
+ 142 00ac 8D300000	        lw      $s0, 0($t1)     # move first element of sub-array into scrap array
+ 143 00b0 AE300000	        sw      $s0, 0($s1)
+ 144 00b4 21290004	        addi    $t1, $t1, 4     # advance current sub-array
+ 145 00b8               
+ 146 00b8 08000032	        j       bottom_of_loop
+ 147 00bc               second_first:
+ 148 00bc 8D500000	        lw      $s0, 0($t2)     # move first element of sub-array into scrap array
+ 149 00c0 AE300000	        sw      $s0, 0($s1)
+ 150 00c4 214A0004	        addi    $t2, $t2, 4     # advance current sub-array
+ 151 00c8               
+ 152 00c8               bottom_of_loop:
+ 153 00c8 22310004	        addi    $s1, $s1, 4     # advance scrap array pointer
+ 154 00cc               
+ 155 00cc 0800001D	        j       while_no_empty
+ 156 00d0               
+ 157 00d0               first_empty:
+ 158 00d0                  
+ 159 00d0               second_empty:
+ 160 00d0               
+ 161 00d0               done:
+ 162 00d0                       # get front of scrap array (s2)
+ 163 00d0                       # front of original array (s3)
+ 164 00d0 8E540000	        lw      $s4, 0($s2)     # copy first element from scrap array to original
+ 165 00d4 AE740000	        sw      $s4, 0($s3)
+ 166 00d8                       # iterate both
+ 167 00d8 22520004	        addi    $s2, $s2, 4     # increment both pointers
+ 168 00dc 22730004	        addi    $s3, $s3, 4
+ 169 00e0                       # until low > high
+ 170 00e0 01B3A82A	        slt     $s5, $t5, $s3   # set if end is less than front
+ 171 00e4 12A0FFFA	        beq     $s5, $zero, done
+ 172 00e8                       
+ 173 00e8               #
+ 174 00e8               # Restore registrs ra and s0 - s7 from the stack.
+ 175 00e8               #
+ 176 00e8               
+ 177 00e8 8FBF002C	        lw      $ra, -4+A_FRAMESIZE($sp)
+ 178 00ec 8FB7001C	        lw      $s7, 28($sp)
+ 179 00f0 8FB60018	        lw      $s6, 24($sp)
+ 180 00f4 8FB50014	        lw      $s5, 20($sp)
+ 181 00f8 8FB40010	        lw      $s4, 16($sp)
+ 182 00fc 8FB3000C	        lw      $s3, 12($sp)
+ 183 0100 8FB20008	        lw      $s2, 8($sp)
+ 184 0104 8FB10004	        lw      $s1, 4($sp)
+ 185 0108 8FB00000	        lw      $s0, 0($sp)
+ 186 010c 23BD0030	        addi    $sp, $sp, A_FRAMESIZE
+ 187 0110               
+ 188 0110 03E00008	        jr      $ra
+ 189 0114               # ********** END STUDENT CODE BLOCK 2 **********
+ 190 0114               
+ 191 0114               #
+ 192 0114               # End of Merge routine.
+ 193 0114               #
 
 
-PRINT_INT     = 00000001   
-PRINT_STRING  = 00000004   
-merge           00000000 RG text 
-sort            ******** XG
+A_FRAMESIZE     = 00000030   
+PRINT_INT       = 00000001   
+PRINT_STRING    = 00000004   
+bottom_of_loop    000000C8 R  text 
+done              000000D0 R  text 
+first_empty       000000D0 R  text 
+merge             00000000 RG text 
+second_empty      000000D0 R  text 
+second_first      000000BC R  text 
+sort              ******** XG
+while_no_empty    00000074 R  text 
